@@ -20,7 +20,7 @@ var DB Dbinstance
 
 func ConnectDb() {
     dsn := fmt.Sprintf(
-        "host=db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Shanghai",
+        "host=db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Europe/Moscow",
         os.Getenv("DB_USER"),
         os.Getenv("DB_PASSWORD"),
         os.Getenv("DB_NAME"),
@@ -36,6 +36,11 @@ func ConnectDb() {
     }
 
     log.Println("connected")
+
+    if err := db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";").Error; err != nil {
+    log.Fatal("Failed to create uuid-ossp extension: ", err)
+    }
+
     db.Logger = logger.Default.LogMode(logger.Info)
 
     log.Println("running migrations")

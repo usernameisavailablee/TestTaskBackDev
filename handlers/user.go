@@ -6,9 +6,9 @@ import (
     "github.com/usernameisavailablee/TestTaskBackDev/models"
 )
 
-// CreateUser создает нового пользователя
 func CreateUser(c *fiber.Ctx) error {
     user := new(models.User)
+
 
     if err := c.BodyParser(user); err != nil {
         return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

@@ -2,18 +2,19 @@ package models
 
 import (
     "gorm.io/gorm"
+    "github.com/google/uuid"
 )
 
 type User struct {
     gorm.Model
-    ID       string `gorm:"primaryKey"`
+    ID     uuid.UUID `gorm:"primary_key;type:uuid;default:uuid_generate_v4()"`
     Email    string
 }
 
 type Token struct {
     gorm.Model
     ID         uint   `gorm:"primaryKey"`
-    UserID     string `gorm:"index"`
+    UserID     uuid.UUID `gorm:"index"`
     Refresh    string
-    IPAddress  string 
+    IPAddress  string
 }
