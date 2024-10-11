@@ -5,6 +5,7 @@ import (
     "github.com/usernameisavailablee/TestTaskBackDev/database"
     "github.com/usernameisavailablee/TestTaskBackDev/models"
     "github.com/usernameisavailablee/TestTaskBackDev/auth"
+    "log"
 )
 
 type RefreshTokenRequest struct {
@@ -33,13 +34,27 @@ func RefreshToken(c *fiber.Ctx) error {
         })
     }
 
-    ip := c.IP()
+    ip := auth.GetClientIP(c)
+    log.Printf("Client IP: %s", ip)
 
     var token models.Token
     if err := database.DB.Db.Where("user_id = ?", request.UserID).First(&token).Error; err != nil {
         return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-            "message": "Token not found",
+            "message": "Token or user not found",
         })
+    }
+    var user models.User
+    if err := database.DB.Db.Where("id = ?", request.UserID).First(&user).Error; err != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "User not found",
+        })
+    }
+
+
+    // Проверка изменения IP-адреса и отправка email предупреждения
+    if token.IPAddress != "" && token.IPAddress != ip {
+        userEmail := user.Email
+        auth.SendEmailWarning(userEmail, token.IPAddress, ip)
     }
 
     if err := auth.ValidateRefreshToken(request.RefreshToken, token.Refresh); err != nil {
@@ -63,7 +78,7 @@ func RefreshToken(c *fiber.Ctx) error {
     }
 
     token.Refresh = newHashedRefreshToken
-    token.IPAddress = ip  
+    token.IPAddress = ip
     if err := database.DB.Db.Save(&token).Error; err != nil {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
             "message": "Failed to update refresh token in the database",

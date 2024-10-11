@@ -6,6 +6,7 @@ import (
     "github.com/usernameisavailablee/TestTaskBackDev/models"
     "github.com/usernameisavailablee/TestTaskBackDev/auth"
     "github.com/google/uuid"
+    "log"
 )
 
 type TokenRequest struct {
@@ -47,7 +48,8 @@ func GenerateTokenPair(c *fiber.Ctx) error {
         })
     }
 
-    ip := c.IP()
+    ip := auth.GetClientIP(c)
+    log.Printf("Client IP: %s", ip)
 
     accessToken, err := auth.GenerateAccessToken(userID.String(), ip)
     if err != nil {

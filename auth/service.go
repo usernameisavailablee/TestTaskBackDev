@@ -10,6 +10,7 @@ import (
 
     "github.com/dgrijalva/jwt-go"
     "golang.org/x/crypto/bcrypt"
+    "github.com/gofiber/fiber/v2"
 )
 
 func GenerateAccessToken(userID, ip string) (string, error) {
@@ -49,4 +50,20 @@ func GenerateRefreshToken() (string, string, error) {
 
 func ValidateRefreshToken(refreshToken string, hashedToken string) error {
     return bcrypt.CompareHashAndPassword([]byte(hashedToken), []byte(refreshToken))
+}
+
+
+func SendEmailWarning(email, oldIP, newIP string) {
+    log.Printf("Warning: IP address has changed from %s to %s for user with email %s", oldIP, newIP, email)
+}
+
+func GetClientIP(c *fiber.Ctx) string {
+
+    log.Printf("Headers:", c.GetReqHeaders())
+
+    forwarded := c.Get("X-Forwarded-For")
+    if forwarded != "" {
+        return forwarded
+    }
+    return c.IP()
 }
