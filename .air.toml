@@ -1,2 +1,2 @@
 [build]
-cmd = "rm -f ./tmp/main && go build -o ./tmp/main ./cmd"
+cmd = "rm -f ./tmp/main && go build -buildvcs=false -o ./tmp/main ./cmd"

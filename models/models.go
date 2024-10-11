@@ -8,7 +8,7 @@ import (
 type User struct {
     gorm.Model
     ID     uuid.UUID `gorm:"primary_key;type:uuid;default:uuid_generate_v4()"`
-    Email    string
+    Email    string `gorm:"unique"`
 }
 
 type Token struct {
