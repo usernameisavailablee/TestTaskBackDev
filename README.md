@@ -50,6 +50,8 @@ curl -X POST http://127.0.0.1:3000/user \
     "email": "e321x123111@gmail.com"
 }'
 ```
+Предположим, вы добавили пользователя c UUID:796e357f-b7c8-4768-b9f6-bf32fe4202ce
+
 ### 2. Генерация пары токенов
 **Endpoint:POST http://127.0.0.1:3000/auth/generate-pair**
 ```json
